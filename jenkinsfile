@@ -1,0 +1,24 @@
+pipeline {
+    agent {
+        label 'slave'
+    }
+
+    stages {
+        stage('Git clone') {
+            steps {
+                 script{
+                    checkout scmGit (branches: [[name: '*/master']], userRemoteConfigs: [[url: 'https://github.com/pratik-dev67/loginapp.git']])
+                }
+            }
+        }
+        stage('Maven build') {
+            steps {
+                 script{
+                     withMaven(jdk: 'java_8', maven: 'maven_3.6.3', mavenSettingsConfig: '72ca9a61-bef6-4662-aa91-8bbe5cc098b4', traceability: true) {
+                         sh 'mvn validate test clean install package'    
+                    }   
+                }
+            }
+        }
+    }
+}
